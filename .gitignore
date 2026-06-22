@@ -1,0 +1,11 @@
+# Contenedores y entornos locales
+.env
+
+# Carpetas de datos persistentes (¡No subas la BD a Git!)
+data/postgres_data/
+data/keycloak_providers/*
+!data/keycloak_providers/.gitkeep
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db

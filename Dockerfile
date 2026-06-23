@@ -1,20 +1,14 @@
-# Usamos la imagen oficial optimizada para Quarkus
-FROM quay.io/keycloak/keycloak:latest AS builder
+# Modifica la etiqueta de la imagen en ambas etapas
+FROM quay.io/keycloak/keycloak:26.0.2 AS builder
 
-# Habilitamos características de salud y métricas por defecto
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
-
-# Definimos el vendor de la base de datos (PostgreSQL)
 ENV KC_DB=postgres
 
 WORKDIR /opt/keycloak
-# Construye una imagen optimizada
 RUN /opt/keycloak/bin/kc.sh build
 
-FROM quay.io/keycloak/keycloak:latest
+FROM quay.io/keycloak/keycloak:26.0.2
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
-# Comando por defecto para iniciar en modo producción (requiere HTTPS/Proxy)
-# Si es para desarrollo local estricto, se puede cambiar a: start-dev
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start", "--optimized"]

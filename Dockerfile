@@ -12,3 +12,4 @@ FROM quay.io/keycloak/keycloak:26.0.2
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start", "--optimized"]
+

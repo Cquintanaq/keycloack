@@ -84,6 +84,68 @@ El `Dockerfile` construye primero una imagen optimizada y luego inicia Keycloak 
 
 Eso implica que el despliegue esta pensado para un escenario con proxy reverso o configuracion equivalente para manejar HTTPS y encabezados `x-forwarded`.
 
+## Importar grupos desde realm-export.json
+
+Si ya tienes el realm creado y solo necesitas crear/actualizar la estructura de grupos, puedes usar el script:
+
+```bash
+python scripts/import_keycloak_groups.py --file realm-export.json
+```
+
+Variables de entorno requeridas para el script:
+
+- `KEYCLOAK_URL` (por defecto `http://localhost:8080`)
+- `KEYCLOAK_ADMIN`
+- `KEYCLOAK_ADMIN_PASSWORD`
+
+Opcional:
+
+- `KEYCLOAK_REALM` para forzar el realm destino (si no se define, usa el campo `realm` del JSON).
+
+Ejemplo en PowerShell:
+
+```powershell
+$env:KEYCLOAK_URL="http://localhost:8080"
+$env:KEYCLOAK_ADMIN="admin"
+$env:KEYCLOAK_ADMIN_PASSWORD="admin_password"
+python .\scripts\import_keycloak_groups.py --file .\realm-export.json
+```
+
+El script crea la jerarquia de `groups` y actualiza atributos si el grupo ya existe.
+
+### Ejecutar el script desde Docker (recomendado)
+
+Si no tienes Python instalado en tu maquina, puedes ejecutar la importacion usando un contenedor temporal de Python en la misma red de Docker Compose.
+
+1. Levanta Keycloak y PostgreSQL:
+
+```bash
+docker compose up -d --build
+```
+
+2. Ejecuta el script desde un contenedor Python, reutilizando las variables de `.env`:
+
+```bash
+docker run --rm \
+	--network keycloack_keycloak_network \
+	--env-file .env \
+	-e KEYCLOAK_URL=http://keycloak:8080 \
+	-e KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN_USER} \
+	-e KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD} \
+	-v ${PWD}:/work \
+	-w /work \
+	python:3.12-alpine \
+	python scripts/import_keycloak_groups.py --file realm-export.json
+```
+
+3. Verifica en el panel de administracion de Keycloak que los grupos fueron creados en el realm esperado.
+
+Notas:
+
+- La red `keycloack_keycloak_network` corresponde al nombre por defecto generado por Docker Compose para este proyecto.
+- En Windows PowerShell, si `${PWD}` no funciona en tu entorno, reemplazalo por una ruta absoluta (por ejemplo: `C:/Users/tu_usuario/Videos/Docker/keycloack`).
+- Si quieres forzar un realm distinto al del JSON, agrega `--realm NOMBRE_REALM` al final del comando.
+
 ## Persistencia
 
 - PostgreSQL guarda sus datos en `data/postgres_data/`.

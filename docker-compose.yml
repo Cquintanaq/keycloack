@@ -26,20 +26,18 @@ services:
     container_name: keycloak_service
     restart: unless-stopped
     environment:
-      # Configuración de Admin inicial
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      # CAMBIO AQUÍ: Nuevas variables obligatorias en Keycloak 26
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       
-      # Configuración de Base de Datos
+      # Lo demás se mantiene igual
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
       KC_DB_USERNAME: ${DB_USER}
       KC_DB_PASSWORD: ${DB_PASSWORD}
-      
-      # Configuración de Entorno / Red
       KC_HOSTNAME: ${KC_HOSTNAME}
-      KC_PROXY_HEADERS: xforwarded # Ideal si usas Nginx, Traefik o Apache como Reverse Proxy
-      KC_HTTP_ENABLED: 'true'      # Delegamos el SSL/TLS al Reverse Proxy
+      KC_PROXY_HEADERS: xforwarded 
+      KC_HTTP_ENABLED: 'true'
     ports:
       - "${KC_PORT}:8080"
     volumes:

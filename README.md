@@ -161,8 +161,15 @@ Si eliminas esas carpetas, perderas la informacion persistida asociada.
 ├── docker-compose.yml
 ├── .env.example
 ├── .gitignore
+├── AKS_ACR_DEPLOY_GUIDE.md
 └── README.md
 ```
+
+## Guia de despliegue en Azure
+
+Para el flujo completo de build, push a ACR y despliegue/actualizacion en AKS, revisa:
+
+- `AKS_ACR_DEPLOY_GUIDE.md`
 
 ## Sugerencias de mejora
 

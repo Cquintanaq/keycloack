@@ -162,14 +162,19 @@ Si eliminas esas carpetas, perderas la informacion persistida asociada.
 ├── .env.example
 ├── .gitignore
 ├── AKS_ACR_DEPLOY_GUIDE.md
+├── AKS_ACR_CLEANUP_GUIDE.md
 └── README.md
 ```
 
 ## Guia de despliegue en Azure
 
-Para el flujo completo de build, push a ACR y despliegue/actualizacion en AKS, revisa:
+Para el flujo completo desde cero en Azure Cloud Shell (Bash), revisa:
 
 - `AKS_ACR_DEPLOY_GUIDE.md`
+
+Para verificacion y eliminacion de recursos (AKS, ACR y PostgreSQL), revisa:
+
+- `AKS_ACR_CLEANUP_GUIDE.md`
 
 ## Sugerencias de mejora
 

@@ -1,0 +1,1 @@
+Test de correo SMTP exitoso.

@@ -15,7 +15,8 @@ La idea del proyecto es ofrecer un entorno local o de pruebas con una configurac
 - `docker-compose.yml`: levanta los servicios `postgres` y `keycloak` en una red privada.
 - `.env`: contiene credenciales y parametros de arranque.
 - `data/postgres_data/`: almacenamiento persistente de PostgreSQL.
-- `data/keycloak_providers/`: carpeta para proveedores o extensiones de Keycloak.
+- `plugins/`: proveedores (JAR) montados en `/opt/keycloak/providers`.
+- `themes/`: themes montados en `/opt/keycloak/themes`.
 
 ## Requisitos
 
@@ -33,10 +34,10 @@ cp .env.example .env
 
 2. Ajusta los valores de credenciales y host en `.env`.
 
-3. Verifica que existan las carpetas de datos persistentes:
+3. Verifica que existan las carpetas necesarias:
 
 ```bash
-mkdir -p data/postgres_data data/keycloak_providers
+mkdir -p data/postgres_data plugins themes
 ```
 
 ## Variables de entorno
@@ -64,6 +65,28 @@ Para ver los logs:
 ```bash
 docker compose logs -f keycloak
 ```
+
+Antes de levantar en servidor, valida sintaxis del compose para evitar errores YAML:
+
+```bash
+docker compose config
+```
+
+## Actualizar repositorio en servidor local
+
+En el servidor donde corre Docker, desde la carpeta del proyecto:
+
+```bash
+cd /home/operaciones/Docker/keycloack
+git stash push -m update-local
+git pull origin main
+git stash pop
+docker compose config
+docker compose down
+docker compose up -d --build
+```
+
+Si `git stash pop` deja cambios locales esperados (por ejemplo `docker-compose.yml`, `certs/`, `data/`), es normal: son personalizaciones del servidor.
 
 ## Acceso
 
@@ -149,7 +172,8 @@ Notas:
 ## Persistencia
 
 - PostgreSQL guarda sus datos en `data/postgres_data/`.
-- Los proveedores personalizados de Keycloak pueden montarse en `data/keycloak_providers/`.
+- Los proveedores personalizados de Keycloak se toman desde `plugins/`.
+- Los themes personalizados de Keycloak se toman desde `themes/`.
 
 Si eliminas esas carpetas, perderas la informacion persistida asociada.
 

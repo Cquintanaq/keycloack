@@ -1,5 +1,11 @@
 # Keycloak
 
+## Procedimiento de desastre operativo
+
+Para recuperacion e implementacion completa desde cero, revisar:
+
+- PROCEDIMIENTO_DESASTRE_KEYCLOAK.md
+
 Keycloak es la solución central de **Identity and Access Management (IAM)** del sistema RNI. Actúa como **proveedor de identidad (IdP)** confiable, emisor de tokens y gestor de roles, grupos y atributos contextuales. Su configuración está optimizada para cumplir con estándares internacionales de seguridad médica como **HIPAA** y normativas chilenas como la **Ley 20.584** y los lineamientos del **MINSAL**.
 
 <div id='tabla-de-contenidos'></div>

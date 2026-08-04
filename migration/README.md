@@ -57,6 +57,13 @@ Usalo solo si necesitas reconstruir grupos desde SQL Server (NOD_NODO), no desde
 pip install -r migration/requirements.txt
 ```
 
+## Nota de conectividad (importante)
+
+- En este repositorio, docker-compose publica Keycloak como 8443:8443.
+- Para los scripts de migration, configurar KC_URL con HTTPS sin :8443.
+- Ejemplo correcto: https://keycloak-pre.saludteprotege.cl
+- Ejemplo que falla en este entorno: https://keycloak-pre.saludteprotege.cl:8443
+
 ## Advertencias importantes
 
 - No ejecutar Rollback.py en productivo sin revisar RUTS_PILOTO.

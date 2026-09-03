@@ -5,6 +5,7 @@ ENV KC_METRICS_ENABLED=true
 ENV KC_DB=postgres
 
 WORKDIR /opt/keycloak
+COPY plugins/ /opt/keycloak/providers/
 RUN /opt/keycloak/bin/kc.sh build
 
 FROM quay.io/keycloak/keycloak:26.7.3

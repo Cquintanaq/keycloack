@@ -1,5 +1,6 @@
 # Contenedores y entornos locales
 .env
+.env.pro
 
 # Carpetas de datos persistentes (¡No subas la BD a Git!)
 data/postgres_data/

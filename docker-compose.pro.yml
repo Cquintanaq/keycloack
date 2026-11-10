@@ -1,0 +1,60 @@
+name: keycloak-pro
+
+# Usar de forma independiente, no combinar con docker-compose.yml.
+services:
+  keycloak-pro:
+    image: keycloak-rni-pro:26.7.3
+    container_name: keycloak-pro
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: ${PG_HOST:?Define el host DNS de PostgreSQL externo}
+      KC_DB_URL_PORT: ${PG_PORT:-5432}
+      KC_DB_URL_DATABASE: ${PG_DATABASE:?Define la base externa de Keycloak}
+      KC_DB_USERNAME: ${PG_USERNAME:?Define el usuario de PostgreSQL externo}
+      KCRAW_DB_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD en .env.pro}
+      KC_DB_TLS_MODE: verify-server
+      KC_DB_TLS_TRUST_STORE_FILE: /run/secrets/postgres-ca.pem
+      KC_HOSTNAME: ${KC_HOSTNAME:?Define la URL publica HTTPS completa}
+      KC_HTTP_ENABLED: 'false'
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/server.crt.pem
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/server.key.pem
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER:?Define el administrador inicial}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Define la clave inicial en .env.pro}
+      KC_HEALTH_ENABLED: 'true'
+      KC_METRICS_ENABLED: 'true'
+      # Primera puesta en marcha: impedir actualizaciones automaticas de esquema.
+      # Revisar el procedimiento de migracion antes de cambiar esta estrategia.
+      KC_SPI_CONNECTIONS_JPA__QUARKUS__MIGRATION_STRATEGY: validate
+      KC_SPI_CONNECTIONS_JPA__QUARKUS__INITIALIZE_EMPTY: 'false'
+    ports:
+      # No ocupa el 443 del Keycloak existente. Acceso inicial solo local.
+      - '127.0.0.1:${KEYCLOAK_PRO_PORT:-8444}:8443'
+    volumes:
+      - type: bind
+        source: ${PG_CA_FILE:?Define la ruta absoluta de la CA publica de PostgreSQL}
+        target: /run/secrets/postgres-ca.pem
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${KC_HTTPS_CERT_FILE:?Define la ruta absoluta del certificado HTTPS}
+        target: /opt/keycloak/conf/server.crt.pem
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${KC_HTTPS_KEY_FILE:?Define la ruta absoluta de la clave HTTPS}
+        target: /opt/keycloak/conf/server.key.pem
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./themes
+        target: /opt/keycloak/themes
+        read_only: true
+        bind:
+          create_host_path: false
